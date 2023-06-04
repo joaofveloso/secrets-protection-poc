@@ -49,3 +49,6 @@ replay_pid*
 
 # Log file
 *.log
+
+# docker
+data/
