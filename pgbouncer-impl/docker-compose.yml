@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  pgbouncer:
+    image: edoburu/pgbouncer
+    container_name: pgbouncer
+    volumes:
+      - ./userlist.txt:/etc/pgbouncer/userlist.txt
+      - ./pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=test
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  pgbouncer-impl:
+    image: openjdk:17-alpine
+    container_name: pgbouncer-app
+    command: java -jar /app/app.jar
+    volumes:
+      - ./pgbouncer/target/pgbouncer-1.0-SNAPSHOT.jar:/app/app.jar
+    depends_on:
+      - pgbouncer
